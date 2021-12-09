@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,8 @@ namespace nettleieKalkulator1._0._0
     public partial class UI : Form
     {
         #region variables for UI
-    
+
+        debug.logToFile debugToFile = new debug.logToFile("calcLog");   //Object for logging
         List<DateTime> fromDate = new List<DateTime>();     //List to store our from dates(From elhub)
         List<DateTime> toDate = new List<DateTime>();       //List to store our to dates(From elhub)
         List<double> hourlyConsumption = new List<double>();//List to store our hourly power measurments(From elhub)
@@ -140,6 +142,7 @@ namespace nettleieKalkulator1._0._0
                 //Make sure we did not fail to get data from elhub data
                 if (maxHourlyPower == null || totalPowerConsumption == null || weekendConsumption == null || nightConsumption == null || dayConsumption == null)
                 {
+                    debugToFile.writeToLog("Failed getting data from file:");
                     warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                     if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
                     return false; //Failed to get some data, so we wont display TODO: need to show error to user
@@ -200,8 +203,9 @@ namespace nettleieKalkulator1._0._0
                 //Finished 
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                debugToFile.writeToLog("Catched analyzing data: " + e);
                 warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
                 return false;
@@ -231,6 +235,7 @@ namespace nettleieKalkulator1._0._0
                         {
                             if (!readLine.Contains("Fra,Til,KWH 60 Forbruk")) //Check if the header of the file is as expected
                             {
+                                debugToFile.writeToLog("Error in file header: " + readLine);
                                 warningLabel.Text = "Warning, feil filtype oppdaget. Prøv en annen fil.";  //Update warning label for UI
                                 if (warningLabel.Visible == false) warningLabel.Visible = true;            //show warning label incase not visible
                                 return false;       //Wrong file, abort!
@@ -242,15 +247,16 @@ namespace nettleieKalkulator1._0._0
                             fromDate.Add(Convert.ToDateTime(splitValues[0]));//Get the from datetime and add to our list
                             toDate.Add(Convert.ToDateTime(splitValues[1]));  //Get the to datetime and add to our list
                             tempConsumptionString = (splitValues[2] + '.' + splitValues[3]).Replace("\"", " "); //Modify the power string to be readdy to be converted to a double
-                            hourlyConsumption.Add(Convert.ToDouble(tempConsumptionString));//Convert our string to double and add to our list
+                            hourlyConsumption.Add(Convert.ToDouble(tempConsumptionString, CultureInfo.InvariantCulture));//Convert our string to double and add to our list
                         }
                     }
                 }
                 return true;                        //Finished
             }
-            catch
+            catch(Exception e)
             {
                 //TODO: notify user?
+                debugToFile.writeToLog("Catched reading file: " + e);
                 warningLabel.Text = "Warning, feil under lesing av fil. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;            //show warning label incase not visible
                 return false; 
