@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="debug\logToFile.cs" />
     <Compile Include="Elhub\relatedFunctions.cs" />
+    <Compile Include="Nnet\relatedFunctions.cs" />
     <Compile Include="UI.cs">
       <SubType>Form</SubType>
     </Compile>
