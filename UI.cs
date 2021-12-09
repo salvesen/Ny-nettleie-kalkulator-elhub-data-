@@ -21,7 +21,7 @@ namespace nettleieKalkulator1._0._0
         List<DateTime> toDate = new List<DateTime>();       //List to store our to dates(From elhub)
         List<double> hourlyConsumption = new List<double>();//List to store our hourly power measurments(From elhub)
         //TODO: Add more netteiere and function for their setup
-        string[] nettEiere = { "Haugaland kraft", "Norgesnet" , "Lede", "Elvia"};         //List of supported "netteiere"
+        string[] nettEiere = { "Haugaland kraft", "Norgesnet" , "Lede", "Elvia", "BKK"};         //List of supported "netteiere"
         string fileExtension = "";                          //Chosen file location by user
         int movX;                                           //position x
         int movY;                                           //position y
@@ -51,15 +51,19 @@ namespace nettleieKalkulator1._0._0
                         if(warningLabel.Visible == true)warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Norgesnet":
-                        analyzeFileForNnet();                                         //Analyze elhub data for hkraft
+                        analyzeFileForNnet();                                         //Analyze elhub data for norgesnett
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Lede":
-                        analyzeFileForLede();                                         //Analyze elhub data for hkraft
+                        analyzeFileForLede();                                         //Analyze elhub data for lede
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Elvia":
-                        analyzeFileForElvia();                                         //Analyze elhub data for hkraft
+                        analyzeFileForElvia();                                         //Analyze elhub data for elvia
+                        if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
+                        break;
+                    case "BKK":
+                        analyzeFileForBkk();                                         //Analyze elhub data for BKK
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     default:
@@ -129,6 +133,105 @@ namespace nettleieKalkulator1._0._0
         #endregion
 
         #region elhub analyzes
+        private bool analyzeFileForBkk()
+        {
+            try
+            {
+                //Prices TODO: import from JSON file? 
+                double elavgift = 8.91;         //'el avgift' as of 1.1.22
+                double enovaavgift = 1.0;       //'enova avgift' as of 08.12.21
+                double moms = 1.25;             //'Moms' as of 08.12.21
+                double dagEnergiledd = 18.0;    //Day energy price
+                double kveldEnergiledd = 10.0;  //Night/weekend/holliday energy price
+                double dayPriceEnergy = (dagEnergiledd + (elavgift + enovaavgift) * moms) / 100.0;                  //Total price for daytime
+                double nightPriceEnergy = (kveldEnergiledd + (elavgift + enovaavgift) * moms) / 100.0;              //Total price for night/weekend/holiday
+                double oldPriceEnergy = 42.61 / 100.0;                                                              //Old energy price
+                int oldMonthlyCost = 171;                                                                           //Old monthly cost
+
+                //Get calculated data
+                //Power data
+                double? maxHourlyPower = Elhub.relatedFunctions.getMaxPower(hourlyConsumption);                     //Get max hourly power consumption from elhub data
+                double? totalPowerConsumption = Elhub.relatedFunctions.getTotalPower(hourlyConsumption);            //Get total power consumption from elhub data
+                double? weekendConsumption = Hkraft.relatedFunctions.weekendPower(fromDate, hourlyConsumption);     //Get total weekend power consumption from elhub data
+                double? nightConsumption = Hkraft.relatedFunctions.nightTimePower(fromDate, hourlyConsumption);     //Get total night power consumption from elhub data
+                double? dayConsumption = Hkraft.relatedFunctions.dayTimePower(fromDate, hourlyConsumption);         //Get total day power consumption from elhub data
+
+                //Make sure we did not fail to get data from elhub data
+                if (maxHourlyPower == null || totalPowerConsumption == null || weekendConsumption == null || nightConsumption == null || dayConsumption == null)
+                {
+                    debugToFile.writeToLog("Failed getting data from file:");
+                    warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
+                    if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
+                    return false; //Failed to get some data, so we wont display TODO: need to show error to user
+                }
+
+                double monthlyCostNewRegime;                //new montly cost variable
+                switch (maxHourlyPower)
+                {
+                    case double n when n < 5:
+                        monthlyCostNewRegime = 175.0;       //Level one monthly cost
+                        break;
+                    case double n when n < 10:
+                        monthlyCostNewRegime = 290.0;       //Level two monthly cost
+                        break;
+                    case double n when n < 15:
+                        monthlyCostNewRegime = 405.0;       //Level three monthly cost
+                        break;
+                    case double n when n < 20:
+                        monthlyCostNewRegime = 520.0;       //Level three monthly cost
+                        break;
+                    default:
+                        monthlyCostNewRegime = 635.0;       //Level four monthly cost
+                        break;
+                }
+                double energyCostForWeekendConsumption = (double)weekendConsumption * nightPriceEnergy; //Calculate cost for weekend power consumption
+                double energyCostForNightConsumption = (double)nightConsumption * nightPriceEnergy;     //Calculate cost for night power consumption
+                double energyCostForDayConsumption = (double)dayConsumption * dayPriceEnergy;           //Calculate cost for day power consumption
+                double energyCostForOldConsumption = (double)totalPowerConsumption * oldPriceEnergy;    //Calculate old cost for power consumption     
+                double monthlyCostOldRegime = oldMonthlyCost;                                           //'Calculate' old montly cost
+                double newTotalCost = energyCostForWeekendConsumption + energyCostForNightConsumption + energyCostForDayConsumption + monthlyCostNewRegime; //Calculate new total cost
+                double oldTotalCost = energyCostForOldConsumption + monthlyCostOldRegime;               //Calculate old total cost
+
+
+                //Update UI
+                //Power details
+                //Power consumption chart
+                double[] yValuesPower = { Math.Round((double)dayConsumption, 2), Math.Round((double)nightConsumption, 2), Math.Round((double)weekendConsumption, 2) };
+                string[] xValuesPower = { "Dag", "Natt", "Helg" };
+                powerDonutChart.Series["Series1"].Points.DataBindXY(xValuesPower, yValuesPower);
+                totalPowerConsumptionTextBox.Text = Math.Round((double)totalPowerConsumption, 2).ToString() + " kWh.";
+
+                //Max power consumption chart
+                double[] yValuesMaxPower = { Math.Round((double)maxHourlyPower, 2), 20.0 };
+                string[] xValuesMaxPower = { "Max timeforbruk", "Max kapasitetledd" };
+                maxPowerDongutChart.Series["Series1"].Points.DataBindXY(xValuesMaxPower, yValuesMaxPower);
+                kapasitetsLeddPrisTextBox.Text = Math.Round(monthlyCostNewRegime, 2).ToString() + " NOK.";
+
+                //Cost details
+                //New cost chart
+                double[] yValuesCost = { Math.Round(energyCostForDayConsumption, 2), Math.Round(energyCostForNightConsumption, 2), Math.Round(energyCostForWeekendConsumption, 2), Math.Round(monthlyCostNewRegime, 2) };
+                string[] xValuesCost = { "Dag", "Natt", "Helg", "Kapasitetsledd" };
+                newCostDognutChart.Series["Series1"].Points.DataBindXY(xValuesCost, yValuesCost);
+                newPriceTextBox.Text = Math.Round(newTotalCost, 2).ToString() + " NOK.";
+
+                //Old cost chart
+                double[] yValuesOldCost = { Math.Round(energyCostForOldConsumption, 2), Math.Round(monthlyCostOldRegime, 2) };
+                string[] xValuesOldCost = { "Energiledd", "Fastledd" };
+                oldCostDognutChart.Series["Series1"].Points.DataBindXY(xValuesOldCost, yValuesOldCost);
+                oldPriceTextBox.Text = Math.Round(oldTotalCost, 2).ToString() + " NOK.";
+
+                //Finished 
+                return true;
+            }
+            catch (Exception e)
+            {
+                debugToFile.writeToLog("Catched analyzing data: " + e);
+                warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
+                if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
+                return false;
+            }
+        }
+
         private bool analyzeFileForElvia()
         {
             try
