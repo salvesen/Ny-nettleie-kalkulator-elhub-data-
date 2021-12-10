@@ -10,4 +10,4 @@ Click "Velg fil fra disk" and navigate to your downloaded elhub data.
 If it is a valid file the "Analyser data" button should be enabled.
 Click the "Analyser data" button and receive the old and new cost for your data.
 
-CURRENTLY ONLY SUPPORTS HAUGALAND KRAFT
+
