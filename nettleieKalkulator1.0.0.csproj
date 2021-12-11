@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
@@ -56,12 +57,22 @@
     <Compile Include="elvia\relatedFunctions.cs" />
     <Compile Include="lede\relatedFunctions.cs" />
     <Compile Include="Nnet\relatedFunctions.cs" />
+    <Compile Include="priceInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="priceInfoForm.Designer.cs">
+      <DependentUpon>priceInfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="pricing\relatedFunctions.cs" />
     <Compile Include="UI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI.Designer.cs">
       <DependentUpon>UI.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="priceInfoForm.resx">
+      <DependentUpon>priceInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI.resx">
       <DependentUpon>UI.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\euro.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

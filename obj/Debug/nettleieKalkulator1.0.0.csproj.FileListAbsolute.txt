@@ -8,3 +8,4 @@ C:\Users\6603\OneDrive - AUTOSTORE AS\Privat\privat\nettleieCalculator\nettleieK
 C:\Users\6603\OneDrive - AUTOSTORE AS\Privat\privat\nettleieCalculator\nettleieKalkulator1.0.0\nettleieKalkulator1.0.0\obj\Debug\nettleieKalkulator1.0.0.exe
 C:\Users\6603\OneDrive - AUTOSTORE AS\Privat\privat\nettleieCalculator\nettleieKalkulator1.0.0\nettleieKalkulator1.0.0\obj\Debug\nettleieKalkulator1.0.0.pdb
 C:\Users\6603\OneDrive - AUTOSTORE AS\Privat\privat\nettleieCalculator\nettleieKalkulator1.0.0\nettleieKalkulator1.0.0\obj\Debug\nettleieKalkulator1._0._0.UI.resources
+C:\Users\6603\OneDrive - AUTOSTORE AS\Privat\privat\nettleieCalculator\nettleieKalkulator1.0.0\nettleieKalkulator1.0.0\obj\Debug\nettleieKalkulator1._0._0.priceInfoForm.resources

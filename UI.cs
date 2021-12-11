@@ -43,27 +43,28 @@ namespace nettleieKalkulator1._0._0
         {
             try
             {
+                bool analyzeWentOk = false; 
                 //analyzeFileForNnet
                 switch (nettEiere[netteiereComboBox.SelectedIndex])
                 {
                     case "Haugaland kraft":
-                        analyzeFileForHkraft();                                         //Analyze elhub data for hkraft
+                        analyzeWentOk = analyzeFileForHkraft();                                         //Analyze elhub data for hkraft
                         if(warningLabel.Visible == true)warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Norgesnet":
-                        analyzeFileForNnet();                                         //Analyze elhub data for norgesnett
+                        analyzeWentOk = analyzeFileForNnet();                                         //Analyze elhub data for norgesnett
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Lede":
-                        analyzeFileForLede();                                         //Analyze elhub data for lede
+                        analyzeWentOk = analyzeFileForLede();                                         //Analyze elhub data for lede
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "Elvia":
-                        analyzeFileForElvia();                                         //Analyze elhub data for elvia
+                        analyzeWentOk = analyzeFileForElvia();                                         //Analyze elhub data for elvia
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     case "BKK":
-                        analyzeFileForBkk();                                         //Analyze elhub data for BKK
+                        analyzeWentOk = analyzeFileForBkk();                                         //Analyze elhub data for BKK
                         if (warningLabel.Visible == true) warningLabel.Visible = false;   //hide warning label incase visible
                         break;
                     default:
@@ -71,12 +72,21 @@ namespace nettleieKalkulator1._0._0
                         if (warningLabel.Visible == false)warningLabel.Visible = true;  //show warning label incase not visible
                         break;
                 }
+                if (analyzeWentOk)
+                {
+                    priceInfoButton.Enabled = true;
+                }
+                else
+                {
+                    priceInfoButton.Enabled = false;
+                }
             }
             catch
             {
                 //TODO: notify user
                 warningLabel.Text = "Warning, ukjent netteier velg en annen.";          //Update warning label for UI
                 if (warningLabel.Visible == false)warningLabel.Visible = true;          //show warning label incase not visible
+                priceInfoButton.Enabled = false;
             }
         }
 
@@ -152,9 +162,9 @@ namespace nettleieKalkulator1._0._0
                 //Power data
                 double? maxHourlyPower = Elhub.relatedFunctions.getMaxPower(hourlyConsumption);                     //Get max hourly power consumption from elhub data
                 double? totalPowerConsumption = Elhub.relatedFunctions.getTotalPower(hourlyConsumption);            //Get total power consumption from elhub data
-                double? weekendConsumption = Hkraft.relatedFunctions.weekendPower(fromDate, hourlyConsumption);     //Get total weekend power consumption from elhub data
-                double? nightConsumption = Hkraft.relatedFunctions.nightTimePower(fromDate, hourlyConsumption);     //Get total night power consumption from elhub data
-                double? dayConsumption = Hkraft.relatedFunctions.dayTimePower(fromDate, hourlyConsumption);         //Get total day power consumption from elhub data
+                double? weekendConsumption = bkk.relatedFunctions.weekendPower(fromDate, hourlyConsumption);     //Get total weekend power consumption from elhub data
+                double? nightConsumption = bkk.relatedFunctions.nightTimePower(fromDate, hourlyConsumption);     //Get total night power consumption from elhub data
+                double? dayConsumption = bkk.relatedFunctions.dayTimePower(fromDate, hourlyConsumption);         //Get total day power consumption from elhub data
 
                 //Make sure we did not fail to get data from elhub data
                 if (maxHourlyPower == null || totalPowerConsumption == null || weekendConsumption == null || nightConsumption == null || dayConsumption == null)
@@ -219,6 +229,8 @@ namespace nettleieKalkulator1._0._0
                 string[] xValuesOldCost = { "Energiledd", "Fastledd" };
                 oldCostDognutChart.Series["Series1"].Points.DataBindXY(xValuesOldCost, yValuesOldCost);
                 oldPriceTextBox.Text = Math.Round(oldTotalCost, 2).ToString() + " NOK.";
+                //Update prices
+                pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergy.ToString(), nightPriceEnergy.ToString(), monthlyCostNewRegime.ToString());
 
                 //Finished 
                 return true;
@@ -285,12 +297,16 @@ namespace nettleieKalkulator1._0._0
                 double energyCostForDayConsumption = 0;
                 if (elvia.relatedFunctions.isVinter(fromDate))
                 {
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergyVinter.ToString(), nightPriceEnergyVinter.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForWeekendConsumption = (double)weekendConsumption * nightPriceEnergyVinter; //Calculate cost for weekend power consumption
                     energyCostForNightConsumption = (double)nightConsumption * nightPriceEnergyVinter;     //Calculate cost for night power consumption
                     energyCostForDayConsumption = (double)dayConsumption * dayPriceEnergyVinter;           //Calculate cost for day power consumption
                 }
                 else
                 {
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergySummer.ToString(), nightPriceEnergySummer.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForWeekendConsumption = (double)weekendConsumption * nightPriceEnergySummer; //Calculate cost for weekend power consumption
                     energyCostForNightConsumption = (double)nightConsumption * nightPriceEnergySummer;     //Calculate cost for night power consumption
                     energyCostForDayConsumption = (double)dayConsumption * dayPriceEnergySummer;           //Calculate cost for day power consumption
@@ -333,6 +349,7 @@ namespace nettleieKalkulator1._0._0
             }
             catch (Exception e)
             {
+                pricing.relatedFunctions.zeroPricing();
                 debugToFile.writeToLog("Catched analyzing data: " + e);
                 warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
@@ -422,12 +439,14 @@ namespace nettleieKalkulator1._0._0
                 string[] xValuesOldCost = { "Energiledd", "Fastledd" };
                 oldCostDognutChart.Series["Series1"].Points.DataBindXY(xValuesOldCost, yValuesOldCost);
                 oldPriceTextBox.Text = Math.Round(oldTotalCost, 2).ToString() + " NOK.";
-
+                //Update prices
+                pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergy.ToString(), nightPriceEnergy.ToString(), monthlyCostNewRegime.ToString());
                 //Finished 
                 return true;
             }
             catch(Exception e)
             {
+                pricing.relatedFunctions.zeroPricing();
                 debugToFile.writeToLog("Catched analyzing data: " + e);
                 warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
@@ -510,13 +529,16 @@ namespace nettleieKalkulator1._0._0
                 double energyCostForOldConsumption = 0;
                 if (Nnet.relatedFunctions.isVinter(fromDate))
                 {
-                    
 
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergyVinter.ToString(), oldMonthlyCost.ToString(), dayPriceEnergy.ToString(), nightPriceEnergy.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForOldConsumption = (double)totalPowerConsumption * oldPriceEnergyVinter;    //Calculate old cost for power consumption  
                    
                 }
                 else
                 {
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergySummer.ToString(), oldMonthlyCost.ToString(), dayPriceEnergy.ToString(), nightPriceEnergy.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForOldConsumption = (double)totalPowerConsumption * oldPriceEnergySummer;    //Calculate old cost for power consumption
                 }
                 double oldTotalCost = energyCostForOldConsumption + monthlyCostOldRegime;               //Calculate old total cost
@@ -554,6 +576,7 @@ namespace nettleieKalkulator1._0._0
             }
             catch (Exception e)
             {
+                pricing.relatedFunctions.zeroPricing();
                 debugToFile.writeToLog("Catched analyzing data: " + e);
                 warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
@@ -577,7 +600,7 @@ namespace nettleieKalkulator1._0._0
                 double nightPriceEnergyVinter = (kveldEnergileddVinter + (elavgift + enovaavgift) * moms) / 100.0;              //Total price for night/weekend/holiday
                 double dayPriceEnergySummer = (dagEnergileddSommer + (elavgift + enovaavgift) * moms) / 100.0;                  //Total price for daytime
                 double nightPriceEnergySummer = (kveldEnergileddSommer + (elavgift + enovaavgift) * moms) / 100.0;              //Total price for night/weekend/holiday
-                double oldPriceEnergyVinter = 41.74 / 100.0;                                                              //Old energy price
+                double oldPriceEnergy = 41.74 / 100.0;                                                              //Old energy price
                 double oldMonthlyCost = 287.5;                                                                           //Old monthly cost
 
                 //Get calculated data
@@ -629,13 +652,16 @@ namespace nettleieKalkulator1._0._0
                 if (lede.relatedFunctions.isVinter(fromDate))
                 {
 
-
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergyVinter.ToString(), nightPriceEnergyVinter.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForNightConsumption = (double)nightConsumption * nightPriceEnergyVinter;     //Calculate cost for night power consumption
                     energyCostForDayConsumption = (double)dayConsumption * dayPriceEnergyVinter;           //Calculate cost for day power consumption 
 
                 }
                 else
                 {
+                    //Update prices
+                    pricing.relatedFunctions.setPricing(oldPriceEnergy.ToString(), oldMonthlyCost.ToString(), dayPriceEnergySummer.ToString(), nightPriceEnergySummer.ToString(), monthlyCostNewRegime.ToString());
                     energyCostForNightConsumption = (double)nightConsumption * nightPriceEnergySummer;     //Calculate cost for night power consumption
                     energyCostForDayConsumption = (double)dayConsumption * dayPriceEnergySummer;           //Calculate cost for day power consumption
                 }
@@ -644,7 +670,7 @@ namespace nettleieKalkulator1._0._0
 
                 double monthlyCostOldRegime = oldMonthlyCost;                                           //'Calculate' old montly cost
                 double newTotalCost = energyCostForNightConsumption + energyCostForDayConsumption + monthlyCostNewRegime; //Calculate new total cost
-                double energyCostForOldConsumption = (double)totalPowerConsumption * oldPriceEnergyVinter;    //Calculate old cost for power consumption 
+                double energyCostForOldConsumption = (double)totalPowerConsumption * oldPriceEnergy;    //Calculate old cost for power consumption 
                 double oldTotalCost = energyCostForOldConsumption + monthlyCostOldRegime;               //Calculate old total cost
 
 
@@ -674,12 +700,12 @@ namespace nettleieKalkulator1._0._0
                 string[] xValuesOldCost = { "Energiledd", "Fastledd" };
                 oldCostDognutChart.Series["Series1"].Points.DataBindXY(xValuesOldCost, yValuesOldCost);
                 oldPriceTextBox.Text = Math.Round(oldTotalCost, 2).ToString() + " NOK.";
-
                 //Finished 
                 return true;
             }
             catch (Exception e)
             {
+                pricing.relatedFunctions.zeroPricing();
                 debugToFile.writeToLog("Catched analyzing data: " + e);
                 warningLabel.Text = "Warning, feil ved innhenting av data. Prøv en annen fil.";  //Update warning label for UI
                 if (warningLabel.Visible == false) warningLabel.Visible = true;                  //show warning label incase not visible
@@ -780,5 +806,11 @@ namespace nettleieKalkulator1._0._0
 
         }
         #endregion
+
+        private void priceInfoButton_Click(object sender, EventArgs e)
+        {
+            priceInfoForm newForm = new priceInfoForm();
+            newForm.Show();
+        }
     }
 }

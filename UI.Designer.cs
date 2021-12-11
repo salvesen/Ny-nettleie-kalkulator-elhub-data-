@@ -45,9 +45,6 @@
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.sidePanel = new System.Windows.Forms.Panel();
-            this.browseButton = new System.Windows.Forms.Button();
-            this.exitButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.topPanel = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.netteiereComboBox = new System.Windows.Forms.ComboBox();
@@ -70,6 +67,10 @@
             this.kapasitetsLeddPrisTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.priceInfoButton = new System.Windows.Forms.Button();
+            this.browseButton = new System.Windows.Forms.Button();
+            this.exitButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.sidePanel.SuspendLayout();
             this.topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.powerDonutChart)).BeginInit();
@@ -81,6 +82,7 @@
             // sidePanel
             // 
             this.sidePanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(50)))), ((int)(((byte)(79)))));
+            this.sidePanel.Controls.Add(this.priceInfoButton);
             this.sidePanel.Controls.Add(this.browseButton);
             this.sidePanel.Controls.Add(this.exitButton);
             this.sidePanel.Controls.Add(this.button1);
@@ -92,70 +94,6 @@
             this.sidePanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.onMouseDown);
             this.sidePanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.onMouseMove);
             this.sidePanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.onMouseUp);
-            // 
-            // browseButton
-            // 
-            this.browseButton.BackColor = System.Drawing.Color.Transparent;
-            this.browseButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.browseButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.browseButton.FlatAppearance.BorderSize = 0;
-            this.browseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.browseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.browseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.browseButton.Image = global::nettleieKalkulator1._0._0.Properties.Resources.folder;
-            this.browseButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.browseButton.Location = new System.Drawing.Point(0, 731);
-            this.browseButton.Margin = new System.Windows.Forms.Padding(5);
-            this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(200, 50);
-            this.browseButton.TabIndex = 1;
-            this.browseButton.Text = "Velg fil fra disk";
-            this.browseButton.UseVisualStyleBackColor = false;
-            this.browseButton.Click += new System.EventHandler(this.settingsButton_Click);
-            // 
-            // exitButton
-            // 
-            this.exitButton.BackColor = System.Drawing.Color.Transparent;
-            this.exitButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.exitButton.FlatAppearance.BorderSize = 0;
-            this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.exitButton.Image = global::nettleieKalkulator1._0._0.Properties.Resources.logout;
-            this.exitButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.exitButton.Location = new System.Drawing.Point(0, 781);
-            this.exitButton.Margin = new System.Windows.Forms.Padding(5);
-            this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(200, 50);
-            this.exitButton.TabIndex = 2;
-            this.exitButton.Text = "Avslutt";
-            this.exitButton.UseVisualStyleBackColor = false;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.Transparent;
-            this.button1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button1.Enabled = false;
-            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
-            this.button1.Image = global::nettleieKalkulator1._0._0.Properties.Resources.analytics__2_;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(0, 0);
-            this.button1.Margin = new System.Windows.Forms.Padding(5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 50);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Analyser data";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // topPanel
             // 
@@ -541,6 +479,92 @@
             this.label4.TabIndex = 36;
             this.label4.Text = "Forbruksdetaljer:";
             // 
+            // priceInfoButton
+            // 
+            this.priceInfoButton.BackColor = System.Drawing.Color.Transparent;
+            this.priceInfoButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.priceInfoButton.Enabled = false;
+            this.priceInfoButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.priceInfoButton.FlatAppearance.BorderSize = 0;
+            this.priceInfoButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.priceInfoButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.priceInfoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.priceInfoButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.priceInfoButton.Image = global::nettleieKalkulator1._0._0.Properties.Resources.euro;
+            this.priceInfoButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.priceInfoButton.Location = new System.Drawing.Point(0, 50);
+            this.priceInfoButton.Margin = new System.Windows.Forms.Padding(5);
+            this.priceInfoButton.Name = "priceInfoButton";
+            this.priceInfoButton.Size = new System.Drawing.Size(200, 50);
+            this.priceInfoButton.TabIndex = 3;
+            this.priceInfoButton.Text = "Pris info";
+            this.priceInfoButton.UseVisualStyleBackColor = false;
+            this.priceInfoButton.Click += new System.EventHandler(this.priceInfoButton_Click);
+            // 
+            // browseButton
+            // 
+            this.browseButton.BackColor = System.Drawing.Color.Transparent;
+            this.browseButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.browseButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.browseButton.FlatAppearance.BorderSize = 0;
+            this.browseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.browseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.browseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.browseButton.Image = global::nettleieKalkulator1._0._0.Properties.Resources.folder;
+            this.browseButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.browseButton.Location = new System.Drawing.Point(0, 731);
+            this.browseButton.Margin = new System.Windows.Forms.Padding(5);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(200, 50);
+            this.browseButton.TabIndex = 1;
+            this.browseButton.Text = "Velg fil fra disk";
+            this.browseButton.UseVisualStyleBackColor = false;
+            this.browseButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
+            // exitButton
+            // 
+            this.exitButton.BackColor = System.Drawing.Color.Transparent;
+            this.exitButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.exitButton.FlatAppearance.BorderSize = 0;
+            this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.exitButton.Image = global::nettleieKalkulator1._0._0.Properties.Resources.logout;
+            this.exitButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.exitButton.Location = new System.Drawing.Point(0, 781);
+            this.exitButton.Margin = new System.Windows.Forms.Padding(5);
+            this.exitButton.Name = "exitButton";
+            this.exitButton.Size = new System.Drawing.Size(200, 50);
+            this.exitButton.TabIndex = 2;
+            this.exitButton.Text = "Avslutt";
+            this.exitButton.UseVisualStyleBackColor = false;
+            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.Transparent;
+            this.button1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button1.Enabled = false;
+            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(39)))), ((int)(((byte)(61)))));
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(155)))), ((int)(((byte)(188)))));
+            this.button1.Image = global::nettleieKalkulator1._0._0.Properties.Resources.analytics__2_;
+            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Margin = new System.Windows.Forms.Padding(5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(200, 50);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Analyser data";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
@@ -612,5 +636,6 @@
         private System.Windows.Forms.Label warningLabel;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox netteiereComboBox;
+        private System.Windows.Forms.Button priceInfoButton;
     }
 }
